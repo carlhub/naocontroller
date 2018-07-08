@@ -10,5 +10,7 @@ Features Include:
 * Joint movements in many orientations or directions.
 * Can be controlled by an ordinary TV remote.
 
-## Maintainer
-Carlos Ontiveros https://github.com/carlhub
+### Members
+Carlos Ontiveros
+
+Natasha Randall
