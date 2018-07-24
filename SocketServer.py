@@ -30,85 +30,67 @@ def changeDelay():
 		return
 	print"::set::"
 ###############################################################################
-def leftKey():
+def leftKey():									# This function changes to previous slides
+	print"::Key::Action:: "						# Prinout of current settings
+	time.sleep(GLOBAL_KEY_PRESS_DELAY)			# Puse set to 0 seconds
+	keyboardSim.press( Key.left )				# Enter or Return
+	keyboardSim.release( Key.left )				# Release the Enter key
+	print"::Key_pressed::"						# Print so user knows function
+												# has finished
+###############################################################################
+def rightKey():								# This function advances to next slide
 	print"::Key::Action:: "
-	time.sleep(GLOBAL_KEY_PRESS_DELAY)
-	keyboardSim.press( Key.left )#Enter or Return
-	keyboardSim.release( Key.left )
+	time.sleep(GLOBAL_KEY_PRESS_DELAY)		# Pause set to 0 (default)
+	keyboardSim.press( Key.right )			# Enter or Return
+	keyboardSim.release( Key.right )		# Release the key
 	print"::Key_pressed::"		
 ###############################################################################
-def rightKey():
-	print"::Key::Action:: "
-	time.sleep(GLOBAL_KEY_PRESS_DELAY)
-	keyboardSim.press( Key.right )#Enter or Return
-	keyboardSim.release( Key.right )
-	print"::Key_pressed::"		
+# This function will ensure that slides start from the beginning
+# Meant for the start of the experiment
+def restartSlides():
+	print"::Key::Action:: "					# for debugging. User knows it started
+	time.sleep(GLOBAL_KEY_PRESS_DELAY)		# Puase for 0 sec.
+	keyboardSim.press( Key.esc )			# Press Esc
+	keyboardSim.release( Key.esc )			# Release Esc
+	keyboardSim.press( Key.f5 )				# Press key F5 (slideshow mode)
+	keyboardSim.release( Key.f5 )			# Release key F5
+	print"::Key_pressed::"					# Used for debugging. Lets user know 
+											# function finished.
 ###############################################################################
+
 serverPort = 4322
 serverIP = "149.160.188.47"
 GLOBAL_KEY_PRESS_DELAY = 0.0
 
 
-
-
-
-
 print "::SERVER::Running::(EXIT: exitserver)::(Commands: commandenter)"
 
 # # used to detect parameters passed in CLI
-# flag_No_IP_Header_Given = True
-# argument_list = ['','','','']
-# print"::CLI arguments Size::",len(sys.argv)
-# if len(sys.argv) <= 1:
-	# print "::Content::",(sys.argv[0])
-# else:
-	# print"::len(sys.argv) > 1::"
-	# flag_No_IP_Header_Given = False
-	# for i in range (len(sys.argv)):
-		# print "::Content:",(sys.argv[i])
-	# for i in range (len(argument_list)):
-		# argument_list[i]=(sys.argv[i])	
+flag_No_IP_Header_Given = True
+argument_list = ['','','']#None#['','','','']
+print"::CLI arguments Size::",len(sys.argv)
+if len(sys.argv) <= 1:
+	print "::Content::",(sys.argv[0])
+else:
+	print"::len(sys.argv) > 1::"
+	flag_No_IP_Header_Given = False
+	for i in range (len(sys.argv)):
+		print "::Content:",(sys.argv[i])
+	for i in range (len(argument_list)):
+		argument_list[i]=(sys.argv[i])	
 
 
-
-# # PYTHON.EXE FILENAME IP PORT DELAY	
-
-# while flag_No_IP_Header_Given:
-	# keyboard = raw_input("Enter IP: ")
-	# #GLOBAL_IP = keyboard
-	# if(keyboard is not None):
-		# print"::Ok"
-		# GLOBAL_IP = str(keyboard)
-		# break
-		
-# while flag_No_IP_Header_Given:
-	# keyboard = raw_input("Enter PORT: ")
-	# #GLOBAL_IP = keyboard
-	# if(keyboard is not None):
-		# print"::Ok"
-		# GLOBAL_PORT = int(keyboard)
-		# break
-
-# while flag_No_IP_Header_Given:
-	# keyboard = raw_input("Set key press delay (default 1): ")
-	# #GLOBAL_IP = keyboard
-	# if(keyboard is not None):
-		# print"::Ok"
-		# GLOBAL_KEY_PRESS_DELAY = float(keyboard)
-		# break	
-
-# GLOBAL_IP				= argument_list[1]
-# GLOBAL_PORT				= int(argument_list[2])
-# GLOBAL_KEY_PRESS_DELAY	= float(argument_list[3])
-
-GLOBAL_IP				= "192.168.245.5"#argument_list[1]
-GLOBAL_PORT				= 6110#int(argument_list[2])
+#GLOBAL_IP				= "192.168.0.101"
+GLOBAL_IP				= "192.168.245.5"		# This IP# should be the same as the one on Nao_Main_Experiment
+GLOBAL_PORT				= 6110					# This IP# should be the same as the one on Nao_Main_Experiment
 GLOBAL_KEY_PRESS_DELAY	= 0.0#float(argument_list[3])
+GLOBAL_FLAG				= ''
 
-print "::GLOBAL_KEY_PRESS_DELAY",GLOBAL_KEY_PRESS_DELAY
-print "::Port::", GLOBAL_PORT
-print "::IP::",GLOBAL_IP
+print "::GLOBAL_KEY_PRESS_DELAY",GLOBAL_KEY_PRESS_DELAY	# Print out of settings
+print "::Port::", GLOBAL_PORT							# Print out of settings
+print "::IP::",GLOBAL_IP								# Print out of settings
 
+# Code below is taken from an online sample
 #create an INET, STREAMing socket
 serverSocket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 #bind the socket to a public host,
@@ -117,9 +99,51 @@ serverSocket.bind((GLOBAL_IP, GLOBAL_PORT)) #this is the server address
 #become a server socket
 serverSocket.listen(3)
 
-keyboardSim = Controller()
+keyboardSim = Controller()						# From library: Pynput
 
-connectionSocket, addr = serverSocket.accept()
+connectionSocket, addr = serverSocket.accept()	# Part of server socket
+
+GLOBAL_FLAG = "GO"								# Part of experimental code, maybe delete?
+
+#############################################################################################
+while True:
+	while True:
+		#connectionSocket, addr = serverSocket.accept() # this returns a connection/socket		
+		sentence = connectionSocket.recv(1024)# reads data from connection
+		print"::Received::", sentence
+		if(sentence == ''):				# Nothing received from client socket
+			print"::empty::NA::"
+			break
+		if(sentence == 'exitserver'):	# Tells server to quit
+			print "::encountered-->exit"
+			break
+		if(sentence == 'changedelay'):	# disabled 
+			print("::NA")#changeDelay()
+		if(sentence == 'left'):
+			print("::LeftAction")		# Moves to previous slide
+			leftKey()
+		if(sentence == 'right'):		# This function advances to next slide
+			rightKey()	
+		if(sentence == 'restart'):		# Meant for the beginning of a condition
+			restartSlides()				# calls the function to restart the slides
+		if(sentence == 'commandenter'):
+			print"::ENTERsimulate::Action:: "
+			time.sleep(GLOBAL_KEY_PRESS_DELAY) 	# Pause for 0 seconds.
+												# This function advances to next slide
+			keyboardSim.press( Key.enter ) 		# Enter or Return
+			keyboardSim.release( Key.enter )	# Release Enter
+			print"::Key was pressed::"	
+		
+		# Code below is from online sample but it is wokring good.
+		# Capitalize the Sentence
+		capitalizedSentence = sentence.upper()
+		connectionSocket.send(capitalizedSentence)#response to Client		
+	if (GLOBAL_FLAG == 'STOP'):
+		print "::flag detected"
+		break
+
+##############################################################################################
+
 while True:
 	#connectionSocket, addr = serverSocket.accept() # this returns a connection/socket		
 	sentence = connectionSocket.recv(1024)# reads data from connection
@@ -136,7 +160,9 @@ while True:
 		print("::LeftAction")
 		leftKey()
 	if(sentence == 'right'):
-		rightKey()		
+		rightKey()	
+	if(sentence == 'restart'):
+		restartSlides()			
 	if(sentence == 'commandenter'):
 		print"::ENTERsimulate::Action:: "
 		time.sleep(GLOBAL_KEY_PRESS_DELAY)
