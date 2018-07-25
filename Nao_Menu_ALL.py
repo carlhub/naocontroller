@@ -18,52 +18,6 @@
 	Indiana University 2018
 """
 
-	
-# -*- encoding: UTF-8 -*-
-# Key commands for manual input (Array 5-elemnts)
-# ['HEXA-HERE','KEY--','KEYE--','TOSHIBA_VC-65','KEY-HERE']
-# ['0000000022dd807f', 0, 'KEY_1', 'TOSHIBA_VC-65', 3]
-# ['0000000022dd40bf', 0, 'KEY_2', 'TOSHIBA_VC-65', 3]
-# ['0000000022ddc03f', 0, 'KEY_3', 'TOSHIBA_VC-65', 3]
-# ['0000000022dda857', 0, 'KEY_PLAY', 'TOSHIBA_VC-65', 3]
-# ['0000000002fd48b7', 0, 'KEY_POWER', 'Apex_K12B-C2', 3]
-#
-# How to use/call movehead function
-#				#		START	 #
-#				print("::end::test::4")
-#				target = "left"
-#				movehead(target,motionProxy)
-#				time.sleep(1.0)
-								#		END		 #
-# How to hardcode commands/functions to move head
-##				## START Code  ##
-##				print("::end::test::9")
-##				motionProxy.wbEnableEffectorControl("Head", True)
-##				names	   = ["HeadYaw", "HeadPitch"]
-##				MP = motionProxy
-##				yawTime=1.0
-##				pitchTime=1.2
-##				isAbsolute=True
-##				angleLists = [30.0*almath.TO_RAD,25.0*almath.TO_RAD]
-##				timeLists  = [yawTime, pitchTime]
-##				MP.angleInterpolation(names, angleLists, timeLists, isAbsolute)
-##				time.sleep(1.0)
-##				motionProxy.wbEnableEffectorControl("Head", False)
-##				print("::end::test::Left")
-								## END
-# To Exit
-##				#sys.exit(0)
-##								tts = ALProxy("ALTextToSpeech",robotIP,PORT)
-																#tts.say("Command Received")
-##				#		Start Speak
-##				tts = ALProxy("ALTextToSpeech",robotIP,PORT)
-##				tts.say("Nao")
-##				#		End
-#
-# This is a tiny example that shows how to show live images from Nao using PyQt.
-# You must have python-qt4 installed on your system.
-#
-
 #import sys
 
 from PyQt4.QtGui import QWidget, QImage, QApplication, QPainter
@@ -83,9 +37,6 @@ import motion
 import naoqi
 import qi
 import sys
-##import tty
-##import termios
-##import keyboard
 from naoqi import ALProxy
 from naoqi import ALModule
 
@@ -186,17 +137,7 @@ def menu_RArmControl():
 
 ###############################################################################
 
-#	VIDEO CLASS	##########GLOBAL_VID_RESOLUTION
-# Parameter ID Name 	ID Value 	Description
-# kQQQQVGA 	8 	Image of 40*30px
-# kQQQVGA 	7 	Image of 80*60px
-# k4VGA 	3 	Image of 1280*960px
-# kVGA 		2 	Image of 640*480px
-# kQVGA 	1 	Image of 320*240px
-# kQQVGA 	0 	Image of 160*120px
 
-
-####
 class ImageWidget(QWidget):
 	"""
 	Tiny widget to display camera images from Naoqi.
@@ -363,12 +304,15 @@ def getAnglesInfo(names,useSensors):
 	#print "::angleLists___:",angleLists
 	print "::angles_______:",anglesPrint
 	
+
 ###############################################################################
-# def moveheadChange():
-	# print "::moveheadChange:"
-	# MP = ALProxy("ALMotion", ROBOT_IP_GLOBAL, PORT_GLOBAL)
-	# #MP.changeAngles(names,changes,fractionMaxSpee)
-	# MP.changeAngles("HeadYaw", -0.15, 0.05)#Right
+def moveHeadOrigin():	
+	try:				
+		motionProxy = ALProxy("ALMotion", ROBOT_IP_GLOBAL, PORT2)
+	except Exception, e:
+		print "::ALMotion__ error", e
+	motionProxy.post.angleInterpolation("HeadPitch", 0.0, 1.0, True) #'post' funciton allows paralled funtionality
+
 ###############################################################################
 def moveheadGoRight():
 	print "::moveheadChange:"
@@ -392,7 +336,9 @@ def moveheadGoDown():
 	print "::moveheadChange:"
 	MP = ALProxy("ALMotion", ROBOT_IP_GLOBAL, PORT_GLOBAL)
 	#MP.changeAngles(names,changes,fractionMaxSpee)
-	MP.changeAngles("HeadPitch", 0.15, 0.05)#Right		
+	#MP.changeAngles("HeadPitch", 0.15, 0.05)#Right	 --backup
+	#MP.changeAngles("HeadPitch", ,,)
+	MP.changeAngles("HeadPitch", 0.35, 0.20)#Right		was 0.35
 	MP.wbEnableEffectorControl("Head", False)
 ###############################################################################
 
@@ -431,36 +377,9 @@ def movehead(direction,MP,yawTime=1.0,pitchTime=1.2,isAbsolute=True):
 	
 	#MP.post.angleInterpolation(names, angleLists, timeLists, isAbsolute) #'post' funciton allows paralled funtionality
 	MP.post.angleInterpolation(names, angleLists, timeLists, isAbsolute) #'post' funciton allows paralled funtionality
-	
-	# print "::FALSE__"
-	# getAnglesInfo(names,False)
-	# print "::TRUE::"
-	# getAnglesInfo(names,True)	
-	# try:
-		# # print "::FALSE__"
-		# # getAnglesInfo(name,False)
-		# # anglesPrint = MP.getAngles(names,False)
-		# # print "::MP___________:",MP
-		# # print "::Name_________:",names
-		# # print "::angleLists___:",angleLists
-		# # print "::anglesPrint__:",anglesPrint
-		
-		# print "::TRUE__"
-		# anglesPrint = MP.getAngles(names,True)
-		# print "::MP___________:",MP
-		# print "::Name_________:",names
-		# print "::angleLists___:",angleLists
-		# print "::anglesPrint__:",anglesPrint
-	# except Exception, e:
-		# print "error,"
-		# print e
-	# #time.sleep(1.000)
-	
-	# print "::__CALL FUNCTION TO GET ANGLES::"
-	# getAnglesInfo(names,True)#true use sensory data
-###############################################################################
 
 ###############################################################################
+
 def videoEnabler():
 	#print ("Enable Video? (1:YES  2:NO)")
 	#videoChoice = raw_input("Enable Video? (1:YES  2:NO)")
@@ -483,32 +402,6 @@ def videoEnabler():
 	##
 ##	else:
 	print "::VIDEO_ON"      
-
-# def rotate(rx,ry,rz,t,mp,armSide):
-    # effector   = "RArm"
-    # effector   = armSide
-    # space      = motion.FRAME_ROBOT
-    # axisMask   = almath.AXIS_MASK_VEL    # just control position
-    # isAbsolute = True
-
-    # # Since we are in relative, the current position is zero
-    # currentPos = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
-    # # Define the changes relative to the current position
-    # dx         =  0.00      # translation axis X (meters)
-    # dy         =  0.00      # translation axis Y (meters)
-    # dz         =  0.00      # translation axis Z (meters)
-    # dwx        =  rx      # rotation axis X (radians)
-    # dwy        =  ry      # rotation axis Y (radians)
-    # dwz        =  rz     # rotation axis Z (radians)
-    # targetPos  = [dx, dy, dz, dwx, dwy, dwz]
-
-    # # Go to the target and back again
-    # path       = [targetPos]
-    # times      = [t] # seconds
-
-    # mp.positionInterpolation(effector, 1, path,
-                                      # 56, times, isAbsolute)
 
 
 ######################################################################
@@ -543,13 +436,7 @@ def randomMoveHead(robotIP, armSide):
 	isEnabled    = True
 	motionProxy.wbEnableEffectorControl(effectorName, isEnabled)
 
-	# Example showing how to set orientation target for Head tracking
-	# The 3 coordinates are absolute head orientation in NAO_SPACE
-	# Rotation in RAD in x, y and z axis
 
-	# X Axis Head Orientation feasible movement = [-20.0, +20.0] degree
-	# Y Axis Head Orientation feasible movement = [-75.0, +70.0] degree
-	# Z Axis Head Orientation feasible movement = [-30.0, +30.0] degree
 
 	targetCoordinateList = [
 	[+20.0,  00.0,  00.0], # target 0
@@ -563,10 +450,7 @@ def randomMoveHead(robotIP, armSide):
 	[ 00.0,  00.0,  00.0], # target 8
 	]
 
-	# wbSetEffectorControl is a non blocking function
-	# time.sleep allow head go to his target
-	# The recommended minimum period between two successives set commands is
-	# 0.2 s.
+
 	for targetCoordinate in targetCoordinateList:
 		targetCoordinate = [target*math.pi/180.0 for target in targetCoordinate]
 		motionProxy.wbSetEffectorControl(effectorName, targetCoordinate)
@@ -605,22 +489,13 @@ def moveArm(robotIP,armSide):
 	drz = 1.0
 	rotate(drx,-2.0,0.0,2.0,motionProxy,armSide)
 	rotate(3.0,-2.0,-1.0,1.0,motionProxy,armSide)
-	# rotate(1,-2.0,-1.0,1.0,motionProxy)
-	# rotate(-drx,0.0,0.0,motionProxy)
 
 	postureProxy.goToPosture("StandInit", 0.5)	
 	
 ######################################################################
 def moveBody(robotIP):
 	print "movebody"
-	#from naoqi import ALProxy
-##	try:
-##		motion = ALProxy("ALMotion", robotIP, 9559)
-##		motion.moveInit()
-##		motion.moveTo(0.5, 0, 0)
-##	except Exception, e:
-##		print e
-#
+
 	motion = ALProxy("ALMotion", robotIP, 9559)
 	# Set NAO in Stiffness On
 	StiffnessOn(motion)	
@@ -692,26 +567,11 @@ def userInputSpeak(robotIP):
 	input = raw_input("Enter sentence:  ") # (9:EXIT):  ")
 	speakFunction(input)
 	StiffnessOff(motion)
-	#if (input is not None):
-		#print"::not_note_::entered==",input
-	# while True:
-		# #print"Enter 9:EXIT"
-		# input = raw_input("Enter sentence (9:EXIT):  ")
-		# if(input is not None):
-			# print "::input_NOT_none::"
-			# print input
-			# #tts.say(input)
-			# speakFunction(input)
-		# if(input == "9"):
-			# print("::break::input_IS_9_::input=9")
-			# break
-	# StiffnessOff(motion)
+
 ######################################################################
 def speakFunction(text_dialog):#,PARALLEL_TASKS):
 	#,PARALLEL_TASKS is defined GLOBAl
 	tts = ALProxy("ALTextToSpeech",robotIP,PORT2)
-	#tts.say("I am Ready")	
-	#print "hi"
 	if(PARALLEL_TASKS):
 		print "::PARALLEL_TASKS=ON"
 		tts.post.say(text_dialog)
@@ -721,12 +581,6 @@ def speakFunction(text_dialog):#,PARALLEL_TASKS):
 ###############################################################################
 def getNaoNetworkInfo():
 	print "N/A"
-	#alconnman = ALProxy("ALConnectionManager", ROBOT_IP_GLOBAL, PORT_GLOBAL)
-	#print "network state: " + alconnman.state()
-	#print "::NETWORK_INFO::" + alconnman.NetworkInfo()
-	#print alconnman.toALValue()
-	#netInfo = ALProxy("NetworkInfo", ROBOT_IP_GLOBAL, PORT_GLOBAL)
-	#print netInfo.toALValue()
 ###############################################################################
 def getNaoVideo():
 	try:
@@ -761,95 +615,7 @@ def naoTalks():
 	
 	# Enable TalkToSpeech, Set Language, Say text
 	naoTalksLangauage(tts,'',"Hello My name is Nao")
-	#naoTalksLangauage(tts,1,"Welcome to Indiana ")
-	#naoTalksLangauage(tts,2,"Lets Begin the Testing and Training LAB")
-	
-	# •	Domestic Animals 
-# o	Cat: 猫 (Neko)
-# o	Dog: 犬 (Inu)
 
-# •	Zoo Animals 
-# o	Elephant: 象 (Zō)
-# o	Bear: くま (Kuma)
- 
-# •	Colors 
-# o	Red: 赤 (Aka)
-# o	Green: 黄色 (Midori)
-	
-	# New Updated Dialog
-	#naoTalksLangauage(tts,1,"Domestic Animals ")
-	#naoTalksLangauage(tts,1,"	Cat ")
-	naoTalksLangauage(tts,2," 猫")# (Neko)
-	#naoTalksLangauage(tts,1,"	Dog ")
-	naoTalksLangauage(tts,2," 犬")# (Inu)
-
-	#naoTalksLangauage(tts,1,"Zoo Animals ")
-	#naoTalksLangauage(tts,1,"	Elephant  ")
-	naoTalksLangauage(tts,2," 象")# (Zō)
-	#naoTalksLangauage(tts,1,"	Bear ")
-	naoTalksLangauage(tts,2," くま")# (Kuma)
-	 
-	#naoTalksLangauage(tts,1,"Colors ")
-	#naoTalksLangauage(tts,1,"	Red ")
-	naoTalksLangauage(tts,2," 赤")# (Aka)
-	#naoTalksLangauage(tts,1,"	Green ")
-	naoTalksLangauage(tts,2," 黄色")# (Midori)
-	 
-	#naoTalksLangauage(tts,1,"Fruits ")
-	#naoTalksLangauage(tts,1,"	Apple ")
-	naoTalksLangauage(tts,2," 林檎")# (Ringo)
-	#naoTalksLangauage(tts,1,"	Strawberry ")
-	naoTalksLangauage(tts,2," イチゴ")# (Ichigo)
-
-	#naoTalksLangauage(tts,1,"Vegetables  ")
-	#naoTalksLangauage(tts,1,"	Carrot ")
-	naoTalksLangauage(tts,2," ニンジン")# (Ninjin)
-	#naoTalksLangauage(tts,1,"	Pumpkin ")
-	naoTalksLangauage(tts,2," カボチャ ")#(Kabocha)
-
-	#naoTalksLangauage(tts,1,"Food ")
-	#naoTalksLangauage(tts,1,"	Bread ")
-	naoTalksLangauage(tts,2," パン ")#(Pan)
-	#naoTalksLangauage(tts,1,"	Eggs ")
-	naoTalksLangauage(tts,2," 卵 ")#(Tamago)
-
-	#naoTalksLangauage(tts,1,"Toys ")
-	#naoTalksLangauage(tts,1,"	Kite ")
-	naoTalksLangauage(tts,2," 凧 ")#(Tako)
-	#naoTalksLangauage(tts,1,"	Jump rope ")
-	naoTalksLangauage(tts,2," 縄跳び")# (Nawatobi)
-	 
-	#naoTalksLangauage(tts,1,"Clothing  ")
-	#naoTalksLangauage(tts,1,"	Watch ")
-	naoTalksLangauage(tts,2," 時計")# (Tokei)
-	#naoTalksLangauage(tts,1,"	Hat ")
-	naoTalksLangauage(tts,2," 帽子")# (Bōshi)
-
-	#naoTalksLangauage(tts,1,"Landscape ")
-	#naoTalksLangauage(tts,1,"	Mountain ")
-	naoTalksLangauage(tts,2," 山")# (Yama)
-	#naoTalksLangauage(tts,1,"	Tree ")
-	naoTalksLangauage(tts,2," 木")# (Ki)
-
-	#naoTalksLangauage(tts,1,"Shapes  ")
-	#naoTalksLangauage(tts,1,"	Triangle ")
-	naoTalksLangauage(tts,2," 三角形")# (Sankakkei)
-	#naoTalksLangauage(tts,1,"	Star ")
-	naoTalksLangauage(tts,2," 星形")# (Hoshigata)
-	 
-	#naoTalksLangauage(tts,1,"Transportation  ")
-	#naoTalksLangauage(tts,1,"	Train ")
-	naoTalksLangauage(tts,2," 模型")# (Ressha)
-	#naoTalksLangauage(tts,1,"	Plane ")
-	naoTalksLangauage(tts,2," 平面")# (Hikōki)
-	#naoTalksLangauage(tts,1,"	Bike ")
-	naoTalksLangauage(tts,2," 自転車")# (Jitensha)
-	 
-	#naoTalksLangauage(tts,1,"Insects  ")
-	#naoTalksLangauage(tts,1,"	Bee  ")
-	naoTalksLangauage(tts,2," 蜂")# (Hachi)
-	#naoTalksLangauage(tts,1,"	Snail  ")
-	naoTalksLangauage(tts,2," カタツムリ")#(Katatsumuri)
 	
 ###############################################################################
 def naoTalksLangauage(tts,lang,text):
@@ -872,11 +638,7 @@ def naoTalksLangauage(tts,lang,text):
 	
 	tts.setLanguage('English') # reset to English
 ###############################################################################
-def main(robotIP,faceSize,PORT=9559):
-	
-	# print (bcolors.WARNING + "Warning: No active frommets remain. Continue?" + bcolors.OKGREEN) #bcolors.ENDC
-	# print('\x1b[6;30;42m' + 'Success!' + '\x1b[0m')
-	
+def main(robotIP,faceSize,PORT=9559):	
 	try:		
 		# START
 		initRemoteInputFlag = True
@@ -886,52 +648,18 @@ def main(robotIP,faceSize,PORT=9559):
 		motion_service = session.service("ALMotion")
 		motion_service.wakeUp()
 		ba_service.startAwareness()
-##				print "Take some time to play with the robot"
-##				time.sleep(50)
-		#print "Stopping BasicAwareness"
 		ba_service.stopAwareness()
 		motion_service.rest()
-
-##		# ALMotion Start Setup  #
-##		motionProxy = ALProxy("ALMotion", robotIP, PORT)
-##		motionProxy.setStiffnesses("Head", 1.0)
-##		motionProxy.wbEnableEffectorControl("Head", True)
 	except Exception, e:
 		print "::ERROR::ALBasicAwareness,ALMotion", e
 
 
-	# ALMotion Start Setup	#
 	try:				
 		motionProxy = ALProxy("ALMotion", robotIP, PORT)
-##		motionProxy.setStiffnesses("Head", 1.0)
-##		motionProxy.wbEnableEffectorControl("Head", True)		
 	except Exception, e:
 		print "::ALMotion__ error", e
-	# ALTracker
-##		try:
-##				trackerProxy = ALProxy("ALTracker", robotIP, PORT)
-##		except Exception, e:
-##				print "Could not create proxy to ALTracker"
-##				print "Error was: ", e
 
-	# ALInfrared
-	try:
-		#print("start infrared")
-		lirc = ALProxy("ALInfrared", robotIP, PORT)
-		lirc.initReception(10)				  
-		lirc.exit() #RESET
-		lirc = ALProxy("ALInfrared", robotIP, PORT)
-		lirc.initReception(10)				  
-##		
-##				lircProxy = naoqi.ALProxy("ALInfrared", robotIP, PORT)				  
-##				lircProxy.sendRemoteKey("My_TV_name", "KEY_POWER")
-##				pythonModule = myModule("pythonModule")
-##				memProxy = naoqi.ALProxy("ALMemory")#, robotIP, PORT)
-##				memoryProxy.subscribeToEvent("InfraRedRemoteKeyReceived", "pythonModule", "pythondatachanged")
-##				lirc.sendRemoteKey("My_TV_name", "KEY_POWER")				 
-		print("::infrared OK")
-	except Exception, e:
-		print "Error was: ", e
+
 	# ALMemory							
 	try:
 		memoryProxy = ALProxy("ALMemory", robotIP, PORT)
@@ -959,26 +687,7 @@ def main(robotIP,faceSize,PORT=9559):
 	# init VARIABLES
 	POSTURE_PROXY_GLOBAL = postureProxy
 
-
-				# dont touch! I have little understanding of what this actual does, but it is necessary
-##		memoryProxy.subscribeToEvent("InfraRedRemoteKeyReceived", "pythonModule", "pythondatachanged")
-##		StiffnessOn(motionProxy)
-				# First, wake up.
-				# motionProxy.wakeUp()
-##		motionProxy.setStiffnesses("Head", 1.0)
-
-				# Add target to track.
 	targetName = "Face"
-##		  faceWidth = faceSize
-##		trackerProxy.registerTarget(targetName, faceWidth)
-
-				# Then, start tracker.
-##		trackerProxy.track(targetName)
-##		trackerProxy.stopTracker() # TEST TEMP Disalbe tracker
-
-	#print "ALTracker successfully started, now show your face to robot!"
-	#print "Use Ctrl+c to stop this script."
-
 
 	# initiate variables for while statements
 	target = [0.0, 0.0, 0.0]
@@ -986,74 +695,16 @@ def main(robotIP,faceSize,PORT=9559):
 	newpos = 'KEY_1'
 	firstCenter = True
 
-	bootUp = True
-	#		START  Move	 #
-##	print("::START::voice")
-##	target = "origin"
-##	movehead(target,motionProxy)
-	#		Start Speak
-	#tts = ALProxy("ALTextToSpeech",robotIP,PORT)
-	speakFunction("I am Ready")	
+	bootUp = True # part of original code
+	
 	try:
 		# run the entire dialogue first
 		while True:
-			# First check if POWER button is in memory
-			# if(initRemoteInputFlag is True):
-				# print("::initRemoteInput")
-				# while True:
-					# memoryProxy.subscribeToEvent("InfraRedRemoteKeyReceived", "pythonModule", "pythondatachanged")
-					# remoteInput = memoryProxy.getData("InfraRedRemoteKeyReceived")
-					# memoryProxy.unsubscribeToEvent("InfraRedRemoteKeyReceived", "pythonModule")
-					# if(remoteInput is None):
-						# print("::remoteInput::NA")
-						# remoteInput=['0000000002fd48b7', 0, 'KEY_POWER', 'Apex_K12B-C2', 3]
-					# print("::remoteInput[2]==", remoteInput[2])
-					# if(remoteInput[2] != 'KEY_POWER'):
-						# print("::KEY_POWER Has Been Changed::")
-						# initRemoteInputFlag = False
-						# break
-					# print("::Enter NEW Command")
-					# #time.sleep(1)
-			# else:
-				# memoryProxy.subscribeToEvent("InfraRedRemoteKeyReceived", "pythonModule", "pythondatachanged")
-				# remoteInput = memoryProxy.getData("InfraRedRemoteKeyReceived")
-				# memoryProxy.unsubscribeToEvent("InfraRedRemoteKeyReceived", "pythonModule")
 
-
-##			#test print
-##			if (remoteInput is not None):
-##				print("::test::remoteInput is not None:: ")
-##				print remoteInput
-
-##
 			printCommands(robotIP)
 			keyboard = raw_input("Enter Command (Numbers #):  ")
 			print "*Entered= ", keyboard
-			remoteInput = [0,0,0,0,0] # TEMP VAR
-			#print "::KEYBOARD==", keyboard
-##
-			#TEMP
-##			newpos = "KEY_9"
-			#remoteInput[2] == "KEY_9"
-			# remoteInput[2]=['000000000000807f', 0, 'KEY_9', 'TOSHIBA_VC-65', 3]
-			# newpos=remoteInput[2]
-			# print remoteInput[2]		
-			
-			# try:
-				# postureProxy = ALProxy("ALRobotPosture", robotIP, 9559)
-			# except Exception, e:
-				# print "Could not create proxy to ALRobotPosture"
-				# print "Error was: ", e
-			# postureProxy.goToPosture("StandInit", 1.0)
-			# postureProxy.goToPosture("SitRelax", 1.0)
-			# postureProxy.goToPosture("StandZero", 1.0)
-			# postureProxy.goToPosture("LyingBelly", 1.0)
-			# postureProxy.goToPosture("LyingBack", 1.0)
-			# postureProxy.goToPosture("Stand", 1.0)
-			# postureProxy.goToPosture("Crouch", 1.0)
-			#postureProxy.goToPosture("Sit", 1.0)
-			#print postureProxy.getPostureFamily()
-			
+			remoteInput = [0,0,0,0,0] # TEMP VAR			
 
 			if (keyboard  == "1"):
 				#print("::works!")
@@ -1066,10 +717,13 @@ def main(robotIP,faceSize,PORT=9559):
 				target = "right"
 				newpos="KEY_3"				
 			elif (keyboard == "4"):
-				target = "origin"
-				newpos="KEY_PLAY"				
+				newpos="KEY_4"
+				#target = "origin"
+				moveHeadOrigin()
+				newpos="KEY_STOP"
 			elif (keyboard == "5"):
-				target = "center"
+				#target = "center"
+				moveheadGoDown()
 				newpos="KEY_STOP"
 			elif (keyboard == "6"):
 				speakFunction("Hello")
@@ -1169,37 +823,7 @@ def main(robotIP,faceSize,PORT=9559):
 				menu_RArmControl()
 			elif (remoteInput[2] == 'KEY_POWER' or keyboard=="9"):
 				break
-				
-			
-			
-			#Afetr finish if,else if, Posture
-			#print "::Current_Posture==>  ", postureProxy.getPostureFamily()
-			#print postureProxy.getPostureFamily()				
-						
-			#newpos = remoteInput[2]
-			#print("::inside while")				
-			
-			
-			
-			
-			
-			# if(keyboard == "32"):
-				# motionProxy.setStiffnesses("Head", 1.0)
-				# motionProxy.wbEnableEffectorControl("Head", True)	
-				# print"::tk.Tk()__bind_all::root2 logger"
-				# root2 = tk.Tk()				
-				# root2.bind_all('<Key>', keyLogger)
-				# root2.withdraw()
-				# root2.mainloop()
-				# print "::_end_mainloop()"
-				# motionProxy.wbEnableEffectorControl("Head", False)
-				# curpos = newpos
-				# motionProxy.setStiffnesses("Head", 0.0)				
-				##						
-				
-				
 
-				
 		
 			if(keyboard=="9911" or keyboard=="9927"):#Only if Standing!
 				print "::Standing"
@@ -1213,11 +837,7 @@ def main(robotIP,faceSize,PORT=9559):
 				movehead(target,motionProxy)
 				motionProxy.wbEnableEffectorControl("Head", False)
 				curpos = newpos
-
-
-		#print remoteInput
-		#print ("::end of while")
-
+		# End While
 	except KeyboardInterrupt:
 		print
 		print "Interrupted by user"
@@ -1227,22 +847,14 @@ def main(robotIP,faceSize,PORT=9559):
 	if remoteInput[2] == 'KEY_POWER':
 		print("Power hit")		
 	motionProxy.rest()
-	#tts = ALProxy("ALTextToSpeech",robotIP,PORT)
-	speakFunction("good bye ")
-	#tts.say("Good Bye")	
+	
 
 print "ALTracker stopped."
 #######################################################################################
 
 if __name__ == "__main__":
 	
-	
-	# nao.local should always work as the IP address
-	#robotIP = "169.254.127.234" # "169.254.87.118" #"192.168.0.103" #"nao.local"#http://169.254.87.118
-	#robotIP = "169.254.87.118"
-	#test1 = input('Enter IP: ')
-	
-	robotIP = None
+	robotIP = "192.168.0.100"
 	#CHECK IP
 	# used to determine if the robot Ip is able to connect
 	print "::len(sys.argv)::", len(sys.argv)
@@ -1259,106 +871,49 @@ if __name__ == "__main__":
 		print"::alter"
 		print "::argv::", sys.argv[0]
 		print "::argv::", sys.argv[1]
-		print "::argv::", sys.argv[2]
-		#print "::argv::", sys.argv[2]	
-		#robotIP = sys.argv[1]
-		
+		print "::argv::", sys.argv[2]		
 		
 	# Print the App title
-	print_title()
-	
-	
-	#keyboard = raw_input("Enter IP: ")
-	if (robotIP is None):# and keyboard is not None):
-		keyboard = raw_input("Enter IP: ")
-		robotIP=str(keyboard)
-		#ROBOT_IP_GLOBAL = robotIP
-		print "::entered=", robotIP
-	else:
-		print "::ip::"
-		print robotIP
-	#print "::robotIP=", robotIP
-	#robotIP = "192.168.0.101"
-	# if it doesn't work try using the direct IP
-					# robotIP = number
+	print_title()	
+
 	#sys.exit()	
 	#init
 	ROBOT_IP_GLOBAL = robotIP
 	PORT = 9559
 	PORT_GLOBAL = PORT
 	GLOBAL_FPS = 5
-	#print ("Enable Video? (1:YES  2:NO)")
-	videoChoice = raw_input("Enable Video? (1:YES  2:NO)")
+	videoChoice = 1 # 1:ON   2:OFF
 	
-	# if(str(videoChoice) == "1"):
-		# userInputFPS = raw_input("Enter desired FPS (Default 30fps):  ")
-		# if(int(userInputFPS) > 10):
-			# print "::fps=::",userInputFPS
-			# GLOBAL_FPS=userInputFPS
-		# else:
-			# GLOBAL_FPS = 5
-			# print "::fps::", GLOBAL_FPS
-		# #VIDEO
-		# print "::VIDEO_ON"
-		# IP = robotIP ##"nao.local"  # Replace here with your NaoQi's IP address.
-		# #IP = "169.254.87.118"
-		# #PORT = 9559
-		# CameraID = 0
-		# #CameraID = 1
-
-		# app = QApplication(sys.argv)
-		# myWidget = ImageWidget(IP, PORT, CameraID)
-		# myWidget.show()
-		# #sys.exit(app.exec_())
-		# ##
-	# else:
-	       # print "::No_VIDEO"       
-		   
-	# PARALLEL_TASKS
-	userChoice = raw_input("Enable Parallel Tasks (i.e. talk and walk same time)? (1:YES  2:NO)")
-	if(str(userChoice) == "1"):
-		print "::_ON"
-		PARALLEL_TASKS = True
-	else:
-		print "::_OFF"	
-		PARALLEL_TASKS = False
-	# PARALLEL_TASKS
-
-
-	GLOBAL_VID_RESOLUTION = 0	
 	
-	# Initiate Video Feed
 	if(str(videoChoice) == "1"):
-		userInputFPS = raw_input("Enter desired FPS (Default 30fps):  ")
-		if(int(userInputFPS) > 10):
-			print "::fps=::",userInputFPS
-			GLOBAL_FPS=userInputFPS
+		#GLOBAL_FPS = raw_input("Enter desired FPS (Default 30fps):  ") # Disabled
+		if(int(GLOBAL_FPS) > 10):
+			print "::fps=::",GLOBAL_FPS
 		else:
 			GLOBAL_FPS = 5
 			print "::fps::", GLOBAL_FPS
 		#VIDEO
 		print "::VIDEO_ON"
 		IP = robotIP ##"nao.local"  # Replace here with your NaoQi's IP address.
-		#IP = "169.254.87.118"
-		#PORT = 9559
-		#CameraID = 1 #Bottom
-		CameraID = 0 #Top
+		CameraID = 0
+		#CameraID = 1
 
 		app = QApplication(sys.argv)
 		myWidget = ImageWidget(IP, PORT, CameraID)
 		myWidget.show()
 		#sys.exit(app.exec_())
-		##
 	else:
-	       print "::No_VIDEO" 
-	# Init Vid Feed End
-	
+	       print "::No_VIDEO"       
+		   
+	# PARALLEL_TASKS Enabled (default)
+	PARALLEL_TASKS = True
+	GLOBAL_VID_RESOLUTION = 0		
+	# Default 30fps
+	GLOBAL_FPS = 30	
 	
 	# Init Posture	
-	#postureProxy = ALProxy("ALRobotPosture", robotIP, 9559)
 	POSTURE_PROXY_GLOBAL = get_Posture_Proxy()
-	# Init Posture End
-		
+	# Init Posture End		
 	
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--ip", type=str, default="nao.local",
@@ -1368,8 +923,5 @@ if __name__ == "__main__":
 	parser.add_argument("--facesize", type=float, default=0.173,
 		help="Face width.")
 	args = parser.parse_args()
-
 	
-	main(robotIP,args.facesize)
-
-
+	main(robotIP,args.facesize)	# Calls main method
