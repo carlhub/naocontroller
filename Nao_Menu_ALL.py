@@ -14,6 +14,7 @@
 	Python and user must specify IP address of NAO. Text menu will display
 	avialable options.
 
+	Contains code to setup NAO to listen to commands from TV remote.
 	
 	Indiana University 2018
 """
@@ -660,16 +661,29 @@ def main(robotIP,faceSize,PORT=9559):
 		print "::ALMotion__ error", e
 
 
-	# ALMemory							
-	try:
-		memoryProxy = ALProxy("ALMemory", robotIP, PORT)
-		memoryProxy.subscribeToEvent("InfraRedRemoteKeyReceived", "pythonModule", "pythondatachanged")
-		memoryProxy.unsubscribeToEvent("InfraRedRemoteKeyReceived", "pythonModule")##, "pythondatachanged")	  
-		#print "::memoryProxy:: no error"
-	except Exception, e:
-		print "Error when creating memory proxy:"
-		print str(e)		
-
+		
+	####################################################################################################
+	####################################################################################################
+	####################################################################################################
+	
+	# Code for Remote Control				
+	# Contains code to setup NAO to listen to commands from TV remote.
+	
+	# try:
+		# memoryProxy = ALProxy("ALMemory", robotIP, PORT)
+		# memoryProxy.subscribeToEvent("InfraRedRemoteKeyReceived", "pythonModule", "pythondatachanged")
+		# memoryProxy.unsubscribeToEvent("InfraRedRemoteKeyReceived", "pythonModule")##, "pythondatachanged")	  
+		# #print "::memoryProxy:: no error"
+	# except Exception, e:
+		# print "Error when creating memory proxy:"
+		# print str(e)		
+		
+	####################################################################################################
+	####################################################################################################
+	####################################################################################################
+	
+	
+	
 	# ALRobotPosture Code for standing, sitting, or other positions
 	try:
 		postureProxy = ALProxy("ALRobotPosture", robotIP, 9559)
@@ -701,11 +715,15 @@ def main(robotIP,faceSize,PORT=9559):
 		# run the entire dialogue first
 		while True:
 
+			# This code helps the menu work
 			printCommands(robotIP)
 			keyboard = raw_input("Enter Command (Numbers #):  ")
 			print "*Entered= ", keyboard
 			remoteInput = [0,0,0,0,0] # TEMP VAR			
 
+			#								#
+			# Main Menu for All Commands	#
+			#								#
 			if (keyboard  == "1"):
 				#print("::works!")
 				target = "left"
@@ -823,7 +841,10 @@ def main(robotIP,faceSize,PORT=9559):
 				menu_RArmControl()
 			elif (remoteInput[2] == 'KEY_POWER' or keyboard=="9"):
 				break
-
+			#								#
+			# Main Menu for All Commands	#
+			#								#
+		
 		
 			if(keyboard=="9911" or keyboard=="9927"):#Only if Standing!
 				print "::Standing"
@@ -855,23 +876,6 @@ print "ALTracker stopped."
 if __name__ == "__main__":
 	
 	robotIP = "192.168.0.100"
-	#CHECK IP
-	# used to determine if the robot Ip is able to connect
-	print "::len(sys.argv)::", len(sys.argv)
-	print "::(sys.argv)::", (sys.argv)
-	if len(sys.argv) <= 1:
-		#print "Usage python motion_wbEffectorControlHead.py robotIP (optional default: 127.0.0.1)"
-		print "::len(sys.argv)::", len(sys.argv)
-	else:
-		print "::len(sys.argv)::", len(sys.argv)
-		print "::argv::", sys.argv[0]
-		print "::argv::", sys.argv[1]
-		robotIP = sys.argv[1]
-		sys.argv=[sys.argv[0],'--ip',robotIP]
-		print"::alter"
-		print "::argv::", sys.argv[0]
-		print "::argv::", sys.argv[1]
-		print "::argv::", sys.argv[2]		
 		
 	# Print the App title
 	print_title()	
@@ -882,7 +886,7 @@ if __name__ == "__main__":
 	PORT = 9559
 	PORT_GLOBAL = PORT
 	GLOBAL_FPS = 5
-	videoChoice = 1 # 1:ON   2:OFF
+	videoChoice = 2 # 1:ON   2:OFF
 	
 	
 	if(str(videoChoice) == "1"):
@@ -913,8 +917,8 @@ if __name__ == "__main__":
 	
 	# Init Posture	
 	POSTURE_PROXY_GLOBAL = get_Posture_Proxy()
-	# Init Posture End		
 	
+	# Part of sample code so left alone
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--ip", type=str, default="nao.local",
 		help="Robot ip address.")
