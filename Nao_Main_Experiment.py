@@ -217,8 +217,6 @@ def naoTalksFeedText(text,lang=0):
 	tts.setLanguage('English') # reset to English
 	
 ###############################################################################
-#def main(robotIP,faceSize,PORT=9559):
-###############################################################################
 def interact_Contingent(word_list):
 	print "::"
 
@@ -325,7 +323,20 @@ def get_user_choice_interact():
 	print ""
 	print""
 	print""
-	keyboard=raw_input("\t** Enter Choice (when ready):  ")
+	
+	while True:
+		keyboard=raw_input("\t** Enter Choice (when ready):  ")	
+		if(keyboard == ''):
+			keyboard=111
+		keyboard=int(keyboard)
+		if keyboard>0:
+			break
+	
+	# keyboard=raw_input("\t** Enter Choice (when ready):  ")	
+	# if(keyboard == ''):
+		# keyboard=111
+	# keyboard=int(keyboard)	
+	
 	return int(keyboard)	
 ##############################################################################
 
@@ -364,7 +375,7 @@ def interact_BOTH_CONDITIONS(choice):
 	naoTalksFeedText("Whew. I don’t know about you, but I need a break. I’ll see you again in a few minutes")
 	keyboard=get_user_choice_interact() 		# User hit Enter to continue
 	print "::input is: ",keyboard
-	if(keyboard==2):
+	if(keyboard>2):
 		return
 		
 	print "CONDITION:2"						# This is condition 2
@@ -462,9 +473,9 @@ def speak_intro():	#Script that NAO says at beginning of experiment
 def interact_tester2():	# This funct is used for testing Only
 	# Code here is temporary and only to help debug
 	
-	get_user_choice_interact()
+	#get_user_choice_interact()
 	
-	system.exit(0)
+	#system.exit(0)
 	
 	try:
 		tts = ALProxy("ALTextToSpeech", ROBOT_IP_GLOBAL, PORT_GLOBAL)
@@ -480,30 +491,43 @@ def interact_tester2():	# This funct is used for testing Only
 	motionProxy.wbEnableEffectorControl("Head", True)
 	# End Setup
 	
-	list=['列車','蜂']
-	list2=['れっしゃ','はち​​']
+	#list=['列車','蜂']
+	#list2=['れっしゃ','はち​​']
+	"""
+	Practice Session
+
+o    Rabbit: ウサギ (Usagi)
+
+o    Bike: 自転車 (Jitensha)
+
+o    Black: 黒 (Kuro)
+
+o    Zebra: シマウマ(Shimauma)​
+	"""
+	list=['ウサギ','自転車','黒','シマウマ']
+	
 	for i in range (len(list)):
 		print "::Content:",(list[i])
-		naoTalksLangauage(tts,2,list[i]) #JAP Reading of Words 列車		
+		naoTalksLangauage(tts,2,list[i]) #JAP Reading of Words 列車
 		time.sleep(1.50)
-		naoTalksLangauage(tts,2,list[i]) #JAP Reading of Words 列車		
+		naoTalksLangauage(tts,2,list[i]) #JAP Reading of Words 列車
 		time.sleep(3.0)
 		
-		naoTalksLangauage(tts,2,list2[i]) #JAP Reading of Words 列車
-		time.sleep(1.5)
-		naoTalksLangauage(tts,2,list2[i]) #JAP Reading of Words 列車
-		time.sleep(3.0)
+		#naoTalksLangauage(tts,2,list2[i]) #JAP Reading of Words 列車
+		#time.sleep(1.5)
+		#naoTalksLangauage(tts,2,list2[i]) #JAP Reading of Words 列車
+		#time.sleep(3.0)
 	# End
-	while True:
-		changeSlideOnTabletDirection('right')
-		naoTalksLangauage(tts,2,str(WORD_LIST_JAP[int(counter)])) #JAP Reading of Words	
-		time.sleep(0.0250)
-		naoTalksLangauage(tts,2,str(WORD_LIST_JAP[int(counter)])) #JAP Reading of Words x2
-		time.sleep(0.0)
-		counter=int(counter) +1
-		print "::counter::",counter
-		if(counter > 24):# 12 objects x2
-			break	
+	# while True:
+		# changeSlideOnTabletDirection('right')
+		# naoTalksLangauage(tts,2,str(WORD_LIST_JAP[int(counter)])) #JAP Reading of Words	
+		# time.sleep(0.0250)
+		# naoTalksLangauage(tts,2,str(WORD_LIST_JAP[int(counter)])) #JAP Reading of Words x2
+		# time.sleep(0.0)
+		# counter=int(counter) +1
+		# print "::counter::",counter
+		# if(counter > 24):# 12 objects x2
+			# break	
 	naoTalksLangauage(tts,1,"Great Job!. Now we are finished!")
 	
 	motionProxy.setStiffnesses("Head", 0.0)
@@ -637,6 +661,8 @@ if __name__ == "__main__":	# Start of Program
 		print "\t[9] Exit**"		
 
 		keyboard = raw_input("\n\tEnter Option (EXIT: 9):  ")
+		if(keyboard == ''):
+			keyboard=111
 		keyboard=int(keyboard)
 
 		if(keyboard==0):					# Intro

@@ -52,102 +52,12 @@ global WORD_LIST_JAP
 global WORD_LIST_ENG
 #global PORT_GLOBAL
 PORT2 = 9559 # port number
-###############################################################################
 
-class ImageWidget(QWidget):
-	"""
-	Tiny widget to display camera images from Naoqi.
-	"""
-	def __init__(self, IP, PORT, CameraID, parent=None):
-		"""
-		Initialization.
-		"""
-		QWidget.__init__(self, parent)
-		self._image = QImage()
-		self.setWindowTitle('Nao')
-
-		self._imgWidth = 320
-		self._imgHeight = 240
-		self._cameraID = CameraID
-		self.resize(self._imgWidth, self._imgHeight)
-
-		# Proxy to ALVideoDevice.
-		self._videoProxy = None
-
-		# Our video module name.
-		self._imgClient = ""
-
-		# This will contain this alImage we get from Nao.
-		self._alImage = None
-
-		self._registerImageClient(IP, PORT)
-
-		# Trigget 'timerEvent' every 100 ms.
-		self.startTimer(0.51)#(100)
-
-
-	def _registerImageClient(self, IP, PORT):
-		"""
-		Register our video module to the robot.
-		"""
-		self._videoProxy = ALProxy("ALVideoDevice", IP, PORT)
-		# this set the video quality, higher quality consumes more bandwidth
-		#resolution = vision_definitions.k4VGA#1280*960
-		#resolution = vision_definitions.kVGA
-		resolution = vision_definitions.kQVGA  # 320 * 240
-		resolution = vision_definitions.kQQVGA
-		#resolution = vision_definitions.kQQQVGA  # 
-		#resolution = vision_definitions.kQQQQVGA #low
-		colorSpace = vision_definitions.kRGBColorSpace
-		self._imgClient = self._videoProxy.subscribe("_client", resolution, colorSpace, 30)
-
-		# Select camera.
-		self._videoProxy.setParam(vision_definitions.kCameraSelectID,
-								  self._cameraID)
-
-
-	def _unregisterImageClient(self):
-		"""
-		Unregister our naoqi video module.
-		"""
-		if self._imgClient != "":
-			self._videoProxy.unsubscribe(self._imgClient)
-
-
-	def paintEvent(self, event):
-		"""
-		Draw the QImage on screen.
-		"""
-		painter = QPainter(self)
-		painter.drawImage(painter.viewport(), self._image)
-
-
-	def _updateImage(self):
-		"""
-		Retrieve a new image from Nao.
-		"""
-		self._alImage = self._videoProxy.getImageRemote(self._imgClient)
-		self._image = QImage(self._alImage[6],			 # Pixel array.
-							 self._alImage[0],			 # Width.
-							 self._alImage[1],			 # Height.
-							 QImage.Format_RGB888)
-
-
-	def timerEvent(self, event):
-		"""
-		Called periodically. Retrieve a nao image, and update the widget.
-		"""
-		self._updateImage()
-		self.update()
-
-
-	def __del__(self):
-		"""
-		When the widget is deleted, we unregister our naoqi video module.
-		"""
-		self._unregisterImageClient()
 ######################################################################
 
+#	Function: key()
+#	This code below listens to keyboard commands
+#	taken from sample online
 
 def key(event):
 	"shows key or tk code for the key"	
@@ -184,25 +94,24 @@ def key(event):
 		else:
 			print"::NO fit:"
 
-
-###############################################################################
+			
+#	Funciton: callback()  is part of online sampel used to 
+#	listen to keyboard commands.
 def callback(event):
 	print "::callback::"
 	frame.focus_set()
 	print "clicked at", event.x, event.y
 ###############################################################################
-	# Init proxies.
+	# # Init proxies.
 	try:
-			motionProxy = ALProxy("ALMotion", robotIP, 9559)
+		motionProxy = ALProxy("ALMotion", robotIP, 9559)
 	except Exception, e:
-			print "Could not create proxy to ALMotion"
-			print "Error was: ", e
+		print "Could not create proxy to ALMotion"
+		# print "Error was: ", e
 
 	
 ###############################################################################
-
-def moveHeadOrigin(MP):
-	
+def moveHeadOrigin(MP):	
 	#MP.post.angleInterpolation(names, angleLists, timeLists, isAbsolute) #'post' funciton allows paralled funtionality
 	MP.post.angleInterpolation("HeadPitch", 0.0, 1.0, True) #'post' funciton allows paralled funtionality
 	MP.post.angleInterpolation("HeadYaw", 0.0, 1.0, True) #'post' funciton allows paralled funtionality
@@ -237,59 +146,17 @@ def moveheadGoDown(MP):
 	MP.changeAngles("HeadPitch", 0.45, GLOBAL_TIME_MOVE_DELAY)#Right, was 0.35
 	MP.wbEnableEffectorControl("Head", False)
 ###############################################################################	
-
 def moveHeadPositDown(MP): # This moves the head down to a specific position so that it does not always keep going down	
 	#MP.post.angleInterpolation(names, angleLists, timeLists, isAbsolute) #'post' funciton allows paralled funtionality
 	MP.post.angleInterpolation("HeadPitch", 0.35, 0.50, True) #'post' funciton allows paralled funtionality
 	MP.post.angleInterpolation("HeadYaw", 0.0, 0.50, True) #'post' funciton allows paralled funtionality
-
-###############################################################################
-
-def naoTalks():
-	textToSpeechProxy = ALProxy("ALTextToSpeech",ROBOT_IP_GLOBAL,PORT_GLOBAL)
-	try:
-		tts = ALProxy("ALTextToSpeech", ROBOT_IP_GLOBAL, PORT_GLOBAL)
-	except Exception, e:
-		print "::error speech"
-		print e 
-	
-	lang = tts.getAvailableLanguages()
-	voices = str(tts.getAvailableVoices())
-	print "Languages:"
-	print lang
-	#print str(lang)
-	print "Voices"
-	print voices #
-	
-
-	
-###############################################################################
-def naoTalksLangauage(tts,lang,text):
-	langList = ['English','Japanese']
-	
-	if(lang is ''):
-		lang = 0
-	
-	lang = int(lang) # set to int
-	
-	if(lang == 0):
-		lang= langList[0]
-	if(lang == 1):
-		lang = langList[lang-1]
-	if(lang == 2):
-		lang = langList[lang-1]
-	tts.setLanguage(lang)
-	tts.say(text)
-	#time.sleep(3.0)
-	
-	tts.setLanguage('English') # reset to English
 ###############################################################################
 
 # App title
 print_title()
 
 robotIP = "192.168.0.100"
-	
+#robotIP = "127.0.0.1"	
 
 print "IP: ", robotIP
 
@@ -309,18 +176,13 @@ motionProxy.wbEnableEffectorControl("Head", True)
 MOTION_PROXY_GLOBAL = motionProxy
 GLOBAL_CHANGE_FRACTION = 0.20
 
-
+# Display window for entering keys
 root = Tk()
 
-
-
-#TEST LOOP FOR TALKING
-
+# Moves head to Origin
 moveHeadOrigin(MOTION_PROXY_GLOBAL)
 
-
-
-
+# Starts listening to Keyboard keys
 print( "Press a key (Escape key to exit):" )
 frame = Frame(root, width=300, height=300)
 #frame.bind("<Key_1>", key)
